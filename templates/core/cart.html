@@ -1,0 +1,131 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content  %}
+    <main class="main bg-light" id="cart-list">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="{% url 'core:index' %}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                    <span></span> Shop
+                    <span></span> Cart
+                </div>
+            </div>
+            
+        </div>
+        <section class="newsletter mb-15 mt-15">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="position-relative newsletter-inner">
+                            {% comment %} {% if not user.is_authenticated %} {% endcomment %}
+                            <div class="newsletter-content">
+                                <h2 class="mb-20 text-white">
+                                    Stay home & get your daily <br /> needs from our shop
+                                </h2>
+                                <p class="mb-45 text-white text-muted">Start Your Daily Shopping with <span class="text-brand">AdepaMarket</span></p>
+                                {% comment %} <form class="form-subcriber d-flex shadow-sm">
+                                    <input type="email" placeholder="Your emaill address" />
+                                    <button class="btn" type="submit">Subscribe</button>
+                                </form> {% endcomment %}
+                            </div>
+                            {% comment %} {% endif %} {% endcomment %}
+                            {% comment %} <img src="{% static 'assets/imgs/banner/banner-9.png' %}" alt="newsletter" /> {% endcomment %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>      
+        <div class="container pt-40">
+            {% comment %} <p class="fw-10">Delivery Fee: <strong>₵0.00</strong></p> {% endcomment %}
+            &nbsp;
+            <h5 class="mb-10">Subtotal: <strong>₵{{cart_total_amount|floatformat:2}}</strong></h5>
+            <hr>
+            {% if totalcartitems %}
+            <button href="{% url 'core:checkout' %}" style="height: 50px;border-radius: 20px;" class="w-100 btn btn-warning text-dark shadow-sm"><a class="text-dark" href="{% url 'core:checkout' %}">Proceed to checkout ({{totalcartitems}} Item{{totalcartitems|pluralize}})</a></button>
+            {% endif %}
+        </div>
+        <div class="container mb-80 mt-50">
+            <div class="row">
+                <div class="col-lg-8 mb-40">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="text-body"><a href="#" class="text-muted"><i class="fi-rs-trash mr-5"></i>Clear Cart</a></h6>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 justify-content-between">
+                    {% for product_id, item in cart_data.items %}
+                    <div class="product-cart-wrap shadow-sm rounded-3 mb-10" >
+                        <div class="row">
+                                <div class="col-sm-4 product-img-action-wrap" >
+                                    <p class="text-muted">Product</p>
+                                    <div class="product-img"style="text-align: center;">
+                                        <div class="product-img-inner">
+                                            <div class="image product-thumbnail"><img style="width: 100px;" src="{{item.image}}" alt="#"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                                <br>
+                                <div class="col-sm-4 product-content-wrap pt-40 text-center" >
+                                    <p class="text-muted">QTY Unit-price</p>
+                                    <h2><a href="{% url 'core:product-detail' item.pid %}">{{item.title|truncatechars:15}}</a></h2>
+                                    <div class="product-price price" data-title="price">
+                                        <input style="width: 60px;" min="1" value="{{item.qty}}" type="number" class="product-qty-{{ product_id }}">
+                                        <span>×</span>
+                                        <span>₵{{item.price|floatformat:2}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="text-center" data-title="price">
+                                    </div>
+                                    <div class="action text-center mb-15 pt-40">
+                                        <p class="text-muted">Subtotal</p>
+                                        <h4 style="display: inline-flex;" class="text-brand mb-10">₵{% widthratio item.price 1 item.qty %}</h4>
+                                        <br>
+                                        <button style="border: none;background: none;" class="action text-body update-item" data-item="{{ product_id }}"><i class="fi-rs-refresh"></i></button>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button style="border: none;background: none;" class="action text-body delete-item" data-item="{{ product_id }}"><i class="fi-rs-trash"></i></button>
+                                    </div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                    
+                    {% endfor %}
+                </div>
+             
+                <div class="col-lg-4 order-md-last pt-10 border shadow-sm">
+                        <h4 class="d-flex justify-content-between align-items-center mb-3">
+                          <span class="text-primary">Summary</span>
+                          <span class="badge bg-success rounded-pill">{{totalcartitems}}</span>
+                        </h4>
+                        <ul class="list-group mb-3">
+                          <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <div>
+                              <h6 class="my-0">Delivery Fee</h6>
+                              <small class="text-muted">5% on Subtotal</small>
+                            </div>
+                            <span class="text-muted">₵0.00</span>
+                          </li>
+                          <li class="list-group-item d-flex justify-content-between">
+                            <span>Total (GHS)</span>
+                            <strong>₵{{cart_total_amount|floatformat:2}}</strong>
+                          </li>
+                        </ul>
+                
+                        {% if totalcartitems %}
+                        <form class="card p-2">
+                          <div class="input-group">
+                            <a href="{% url 'core:checkout' %}" type="submit" class="btn btn-success w-100">Checkout</a>
+                        </div>
+                        </form>
+                       {% endif %}      
+                       <img class="wow fadeIn animated w-100"  src="{% static 'assets/imgs/theme/payment-method-2.png' %}" alt="" />                  
+                       <img class="wow fadeIn animated w-100"  src="{% static 'assets/imgs/theme/payment-method.png' %}" alt="" />                  
+                </div>
+    
+            </div>
+        </div>
+    </main>
+{% endblock %}
